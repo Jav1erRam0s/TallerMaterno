@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cámara Frontal</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+            font-family: sans-serif;
+        }
+        video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transform: scaleX(-1); /* Efecto espejo para que se sienta natural */
+        }
+        .error-msg {
+            color: white;
+            text-align: center;
+            padding: 20px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+    <video id="webcam" autoplay playsinline muted></video>
+    <div id="error" class="error-msg">
+        <p>No se pudo acceder a la cámara frontal.</p>
+        <p>Asegúrate de dar los permisos necesarios en tu navegador.</p>
+    </div>
+
+    <script>
+        async function iniciarCamara() {
+            const video = document.getElementById('webcam');
+            const errorDiv = document.getElementById('error');
+
+            const opciones = {
+                audio: false, // No necesitamos micrófono
+                video: {
+                    facingMode: "user", // Fuerza el uso de la cámara frontal
+                    width: { ideal: 1280 },
+                    height: { ideal: 720 }
+                }
+            };
+
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia(opciones);
+                video.srcObject = stream;
+            } catch (err) {
+                console.error("Error al acceder a la cámara: ", err);
+                video.style.display = 'none';
+                errorDiv.style.display = 'block';
+            }
+        }
+
+        // Inicia la cámara automáticamente al cargar la pantalla
+        window.addEventListener('DOMContentLoaded', iniciarCamara);
+    </script>
+</body>
+</html>
